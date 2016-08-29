@@ -53,6 +53,12 @@ func (r *Resto) CloseMe() {
 	if r.open == false {
 		return
 	}
-	r.open = false
-	close(r.waiters) // Other go-routines using this channel will exit
+	r.open = false   // Set my attribute open to "false"
+	close(r.waiters) // Other go-routines waiting on this channel will exit
+	// Suspend Server (if cooking for a Client)
+	for _, server := range r.Servers {
+		server.SuspendMe()
+	}
+	// Other go-routines waiting on this channel will exit
+	close(r.Billables)
 }

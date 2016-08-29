@@ -48,6 +48,7 @@ func TestRestoAddClient(t *testing.T) {
 
 func TestRestoClose(t *testing.T) {
 	resto := New()
+	defer resto.CloseMe()
 	resto.AddServer()
 	if got, want := resto.Servers[0].Off, false; got != want {
 		t.Errorf(msg, "Server is not off until the chan is closed", got, want)
