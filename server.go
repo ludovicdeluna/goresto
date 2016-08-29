@@ -26,6 +26,7 @@ func (srv *Server) waitClient(in <-chan *Client, out chan<- *Client) {
 		// Work is done, Server will wait another client
 		srv.Client = nil
 		srv.Busy = false
+		// Return result if chan is 1/ open and 2/ ready to get data
 		out <- clt
 	}
 	// When the channel "in" is closed, escape the for loop.

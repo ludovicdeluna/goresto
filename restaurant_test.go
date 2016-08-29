@@ -9,6 +9,7 @@ var msg string = "%s :\nGot:  %v\nWant: %v"
 
 func TestRestoAddServer(t *testing.T) {
 	resto := New()
+	defer resto.CloseMe()
 	if got, want := len(resto.Servers), 0; got != want {
 		t.Errorf(msg, "New resto has no servers", got, want)
 	}
@@ -23,6 +24,7 @@ func TestRestoAddServer(t *testing.T) {
 
 func TestRestoAddClient(t *testing.T) {
 	resto := New()
+	defer resto.CloseMe()
 	client := NewClient()
 	client2 := NewClient()
 	if got, want := resto.GetClient(client), "No server into the restaurant"; got == nil {

@@ -50,6 +50,9 @@ func (r *Resto) GetClient(clt *Client) error {
 
 // Close restaurant
 func (r *Resto) CloseMe() {
+	if r.open == false {
+		return
+	}
 	r.open = false
 	close(r.waiters) // Other go-routines using this channel will exit
 }
