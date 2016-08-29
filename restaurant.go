@@ -4,22 +4,19 @@ import "errors"
 
 // Represent a restaurant
 type Resto struct {
-	Servers   []*Server // Slide of Server's pointers
-	Name      string    // The name of restaurant
-	Billables Waiters   // Clients ready to pay
-	waiters   Waiters   // (private) Clients waiting
-	open      bool      // (private) Is Open ?
+	Servers   []*Server    // Slide of Server's pointers
+	Name      string       // The name of restaurant
+	Billables chan *Client // Clients ready to pay
+	waiters   chan *Client // (private) Clients waiting
+	open      bool         // (private) Is Open ?
 }
-
-// Waiters, a channel who accept Client'pointers
-type Waiters chan *Client
 
 // Create a new restaurant with empty servers
 func New() *Resto {
 	return &Resto{
 		Name:      "The Restaurant",
-		waiters:   make(Waiters),
-		Billables: make(Waiters),
+		waiters:   make(chan *Client),
+		Billables: make(chan *Client),
 		open:      true,
 	}
 }

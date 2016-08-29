@@ -10,14 +10,14 @@ type Server struct {
 }
 
 // Create a new Server, free to cook meals
-func NewServer(in, out Waiters) *Server {
+func NewServer(in <-chan *Client, out chan<- *Client) *Server {
 	server := Server{}
 	go server.waitClient(in, out)
 	return &server
 }
 
 // (private) Server waits a client to serve
-func (srv *Server) waitClient(in, out Waiters) {
+func (srv *Server) waitClient(in <-chan *Client, out chan<- *Client) {
 	for clt := range in {
 		srv.Busy = true
 		srv.Client = clt
