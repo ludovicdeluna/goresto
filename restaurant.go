@@ -15,8 +15,8 @@ type Resto struct {
 func New() *Resto {
 	return &Resto{
 		Name:      "The Restaurant",
-		waiters:   make(chan *Client),
 		Billables: make(chan *Client),
+		waiters:   make(chan *Client),
 		open:      true,
 	}
 }
