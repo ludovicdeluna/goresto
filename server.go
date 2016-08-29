@@ -12,12 +12,12 @@ type Server struct {
 // Create a new Server, free to cook meals
 func NewServer(in, out Waiters) *Server {
 	server := Server{}
-	go server.WaitClient(in, out)
+	go server.waitClient(in, out)
 	return &server
 }
 
-// Server waits a client to serve
-func (srv *Server) WaitClient(in, out Waiters) {
+// (private) Server waits a client to serve
+func (srv *Server) waitClient(in, out Waiters) {
 	for clt := range in {
 		srv.Busy = true
 		srv.Client = clt
