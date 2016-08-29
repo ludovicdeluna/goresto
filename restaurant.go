@@ -11,12 +11,15 @@ type Resto struct {
 	open      bool      // (private) Is Open ?
 }
 
+// Waiters, a channel who accept Client'pointers
+type Waiters chan *Client
+
 // Create a new restaurant with empty servers
 func New() *Resto {
 	return &Resto{
 		Name:      "The Restaurant",
-		waiters:   NewWaiters(),
-		Billables: NewWaiters(),
+		waiters:   make(Waiters),
+		Billables: make(Waiters),
 		open:      true,
 	}
 }
@@ -52,12 +55,4 @@ func (r *Resto) GetClient(clt *Client) error {
 func (r *Resto) CloseMe() {
 	r.open = false
 	close(r.waiters) // Other go-routines using this channel will exit
-}
-
-// Waiters, a channel who accept Client'pointers
-type Waiters chan *Client
-
-// Buile a Waiters channel
-func NewWaiters() Waiters {
-	return make(Waiters)
 }
