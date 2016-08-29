@@ -6,8 +6,8 @@ import "errors"
 type Resto struct {
 	Servers   []*Server // Slide of Server's pointers
 	Name      string    // The name of restaurant
-	Waiters   Waiters   // Clients waiting
 	Billables Waiters   // Clients ready to pay
+	waiters   Waiters   // (private) Clients waiting
 	open      bool      // (private) Is Open ?
 }
 
@@ -15,7 +15,7 @@ type Resto struct {
 func New() *Resto {
 	return &Resto{
 		Name:      "The Restaurant",
-		Waiters:   NewWaiters(),
+		waiters:   NewWaiters(),
 		Billables: NewWaiters(),
 		open:      true,
 	}
@@ -27,7 +27,7 @@ func (r *Resto) AddServer() {
 		// If restaurant is closed, do not accept new server
 		return
 	}
-	r.Servers = append(r.Servers, NewServer(r))
+	r.Servers = append(r.Servers, NewServer(r.waiters, r.Billables))
 }
 
 // Add a client to the Resto
@@ -43,7 +43,7 @@ func (r *Resto) GetClient(clt *Client) error {
 	go func() {
 		// Do not block the process here if all servers are busy.
 		// With goroutine, simply add the client when chan is read (in background)
-		r.Waiters <- clt
+		r.waiters <- clt
 	}()
 	return nil
 }
@@ -51,7 +51,7 @@ func (r *Resto) GetClient(clt *Client) error {
 // Close restaurant
 func (r *Resto) CloseMe() {
 	r.open = false
-	close(r.Waiters) // Other go-routines using this channel will exit
+	close(r.waiters) // Other go-routines using this channel will exit
 }
 
 // Waiters, a channel who accept Client'pointers

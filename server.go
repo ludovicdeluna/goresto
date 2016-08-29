@@ -10,9 +10,9 @@ type Server struct {
 }
 
 // Create a new Server, free to cook meals
-func NewServer(r *Resto) *Server {
+func NewServer(in, out Waiters) *Server {
 	server := Server{}
-	go server.WaitClient(r.Waiters, r.Billables)
+	go server.WaitClient(in, out)
 	return &server
 }
 
