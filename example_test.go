@@ -20,9 +20,12 @@ func ExampleNew() {
 	// Output: The Restaurant
 }
 
-// Show the numbers of servers in the current restaurant
+// Show the numbers of servers in the current restaurant. Here, because we
+// add a Server (which wait Client in background), we need to defer CloseMe().
+// CloseMe will stop any Server's go-routines and close channels.
 func ExampleResto_AddServer() {
 	myRestaurant := goresto.New()
+	defer myRestaurant.CloseMe()
 	myRestaurant.AddServer()
 	fmt.Print(len(myRestaurant.Servers))
 	// Output: 1
