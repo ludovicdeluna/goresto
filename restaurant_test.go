@@ -25,24 +25,25 @@ func TestRestoAddServer(t *testing.T) {
 func TestRestoAddClient(t *testing.T) {
 	resto := New()
 	defer resto.CloseMe()
-	client := NewClient()
-	client2 := NewClient()
-	if got, want := resto.GetClient(client), "No server into the restaurant"; got == nil {
+	testCases := []struct { name string ; client *Client }{
+		{"Client1", NewClient()},
+		{"Client2", NewClient()},
+	}
+	if got, want := resto.GetClient(testCases[0].client), "No server into the restaurant"; got == nil {
 		t.Errorf(msg, "A client is comming. No server should be in the resto", got, want)
 	}
 	resto.AddServer()
-	resto.GetClient(client) // First client
-	time.Sleep(20 * time.Millisecond)
-	if got, want := resto.Servers[0].Busy, true; got != want {
-		t.Errorf(msg, "Server is cooking for the Client and should be busy", got, want)
-	}
-	if got, want := <-resto.Billables, client; got != want {
-		t.Errorf(msg, "Server finished with Client. Client should be billable", got, want)
-	}
-	resto.GetClient(client2) // Second client
-	time.Sleep(20 * time.Millisecond)
-	if got, want := <-resto.Billables, client2; got != want {
-		t.Errorf(msg, "Server finished with Client2. Client2 should be billable", got, want)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T){
+			resto.GetClient(tc.client)
+			time.Sleep(20 * time.Millisecond)
+			if got, want := resto.Servers[0].Busy, true; got != want {
+				t.Errorf(msg, "Server is cooking for the Client and should be busy", got, want)
+			}
+			if got, want := <-resto.Billables, tc.client; got != want {
+				t.Errorf(msg, "Server finished with Client. Client should be billable", got, want)
+			}
+		})
 	}
 }
 
